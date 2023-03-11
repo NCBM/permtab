@@ -1,7 +1,9 @@
 from pathlib import Path
 import re
 import shlex
-from typing import Callable, Dict, Iterable, List, Tuple, Union
+from typing import Callable, Dict, Iterable, List, Tuple, TypeVar, Union
+
+_T = TypeVar("_T")
 
 
 REGISTERED_RULEFACTORY: List[
@@ -55,3 +57,12 @@ def generate_rule(line: Iterable[str]) -> Tuple[str, Callable[..., bool]]:
 def update_rule(name: str, func: Callable[..., bool]) -> None:
     global REGISTERED_RULE
     REGISTERED_RULE.update({name: func})
+
+
+def load(
+    fp: _T,
+    *,
+    defract_func: Callable[[_T], Iterable[List[str]]] = defract
+) -> None:
+    for df in defract_func(fp):
+        update_rule(*generate_rule(df))
