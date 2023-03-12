@@ -1,5 +1,5 @@
 from pathlib import Path
-from re import Pattern
+from re import Pattern, compile as _compile
 import shlex
 from typing import Callable, Dict, Iterable, List, Tuple, TypeVar, Union
 import warnings
@@ -101,6 +101,8 @@ def find_rule(name: str = "*") -> Callable[..., bool]:
 
 
 def register_rulefactory(
-    pat: Pattern[str], factory: Callable[..., Callable[..., bool]]
+    pat: Union[str, Pattern[str]], factory: Callable[..., Callable[..., bool]]
 ) -> None:
+    if not isinstance(pat, Pattern):
+        pat = _compile(pat)
     REGISTERED_RULEFACTORY.append((pat, factory))

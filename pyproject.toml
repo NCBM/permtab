@@ -1,0 +1,15 @@
+[project]
+name = "permtab"
+version = "0.1.0"
+description = "A simple permission rule parsing library."
+authors = [
+    {name = "HivertMoZara", email = "worldmozara@163.com"},
+]
+license = {text = "MIT"}
+dependencies = []
+requires-python = ">=3.8"
+readme = "README.md"
+
+[project.urls]
+Homepage = "https://github.com/NCBM/permtab"
+Repository = "https://github.com/NCBM/permtab"
