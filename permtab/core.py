@@ -1,5 +1,5 @@
 from pathlib import Path
-import re
+from re import Pattern
 import shlex
 from typing import Callable, Dict, Iterable, List, Tuple, TypeVar, Union
 import warnings
@@ -10,7 +10,7 @@ _T = TypeVar("_T")
 
 
 REGISTERED_RULEFACTORY: List[
-    Tuple[re.Pattern[str], Callable[..., Callable[..., bool]]]
+    Tuple[Pattern[str], Callable[..., Callable[..., bool]]]
 ] = []
 _REGISTERED_RULE: Dict[str, Callable[..., bool]] = {
     "*": lambda *args, **kwargs: True
@@ -82,3 +82,9 @@ def load(
 
 def find_rule(name: str = "*") -> Callable[..., bool]:
     return REGISTERED_RULE.get(name, REGISTERED_RULE["*"])
+
+
+def register_rulefactory(
+    pat: Pattern[str], factory: Callable[..., Callable[..., bool]]
+) -> None:
+    REGISTERED_RULEFACTORY.append((pat, factory))
