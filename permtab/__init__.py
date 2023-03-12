@@ -24,6 +24,7 @@ Format:
 ```
 """
 
-from .core import load, reset_factory, reset_rule
+from .core import parse, load, reset_factory, reset_rule
+from .fileedit import update, edit
 
-__all__ = ("load", "reset_factory", "reset_rule")
+__all__ = ("parse", "load", "reset_factory", "reset_rule", "update", "edit")
