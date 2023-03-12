@@ -1,0 +1,3 @@
+# test permtab
+myrule1     t_aeiou     t_hellp         "t_hello world!"
+myrule2     t_hello     t_world         "t_hello world!"

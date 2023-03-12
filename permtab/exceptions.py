@@ -4,3 +4,11 @@ class BadUpdaterRule(ValueError):
 
 class IgnoringComments(Warning):
     pass
+
+
+class RuleNotLoaded(Warning):
+    pass
+
+
+class FilterNotLoaded(Warning):
+    pass

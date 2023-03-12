@@ -4,7 +4,7 @@ import shlex
 from typing import Callable, Dict, Iterable, List, Tuple, TypeVar, Union
 import warnings
 
-from permtab.exceptions import IgnoringComments
+from permtab.exceptions import FilterNotLoaded, IgnoringComments, RuleNotLoaded
 
 _T = TypeVar("_T")
 
@@ -54,12 +54,20 @@ def digest_filter(sfi: str) -> Callable[..., bool]:
     for pat, fac in REGISTERED_RULEFACTORY:
         if (m := pat.match(sfi)) is not None:
             return fac(*m.groups(), **m.groupdict())
+    warnings.warn(
+        FilterNotLoaded(
+            f"Filter '{sfi}' does not match any factory, using default "
+            "'False' filter."
+        )
+    )
     return lambda *args, **kwargs: False
 
 
 def generate_rule(line: Iterable[str]) -> Tuple[str, Callable[..., bool]]:
     name, *sfilter = line
-    ffilter: map[Callable[..., bool]] = map(digest_filter, set(sfilter))
+    ffilter: Tuple[Callable[..., bool], ...] = tuple(
+        map(digest_filter, set(sfilter))
+    )
     # use `set(sfilter)` to remove duplicate filter.
     def _verify(*args, **kwargs) -> bool:
         return any(filt(*args, **kwargs) for filt in ffilter)
@@ -81,7 +89,15 @@ def load(
 
 
 def find_rule(name: str = "*") -> Callable[..., bool]:
-    return REGISTERED_RULE.get(name, REGISTERED_RULE["*"])
+    if (rule := REGISTERED_RULE.get(name, None)) is not None:
+        return rule
+    warnings.warn(
+        RuleNotLoaded(
+            f"Cannot find any rule that matches {name}, using '*' rule "
+            "instead."
+        )
+    )
+    return REGISTERED_RULE["*"]
 
 
 def register_rulefactory(
