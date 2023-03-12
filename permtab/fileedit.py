@@ -37,4 +37,7 @@ def update(
 def edit(
     parsed: Iterable[List[str]], data: Dict[str, Iterable[str]]
 ) -> Iterable[str]:
-    return (shlex.join((name, *filt)) for name, filt in update(parsed, data))
+    return (
+        f"{shlex.join((name, *filt))}\n"
+        for name, filt in update(parsed, data)
+    )
