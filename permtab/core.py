@@ -69,6 +69,7 @@ def generate_rule(line: Iterable[str]) -> Tuple[str, Callable[..., bool]]:
         map(digest_filter, set(sfilter))
     )
     # use `set(sfilter)` to remove duplicate filter.
+
     def _verify(*args, **kwargs) -> bool:
         return any(filt(*args, **kwargs) for filt in ffilter)
     return name, _verify

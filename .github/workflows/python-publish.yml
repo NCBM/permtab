@@ -1,0 +1,38 @@
+name: Upload Python Package
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@master
+    - name: Set up Python
+      uses: actions/setup-python@v2
+      with:
+        python-version: '3.9'
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip build
+    - name: Build package
+      run: |
+        echo "REL_VER=v${"$(grep version pyproject.toml)":11:-1}" >> $GITHUB_ENV
+        python -m build --sdist --wheel --outdir dist/ .
+    - name: Publish package
+      uses: pypa/gh-action-pypi-publish@master
+      with:
+        user: __token__
+        password: ${{ secrets.PYPI_API_TOKEN }}
+    - name: Create GitHub release
+      uses: marvinpinto/action-automatic-releases@latest
+      with:
+        repo_token: "${{ secrets.GITHUB_TOKEN }}"
+        automatic_release_tag: ${{ env.REL_VER }}
+        title: ${{ env.REL_VER }}
+        prerelease: false
+        files: |
+          dist/*
